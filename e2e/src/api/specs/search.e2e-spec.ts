@@ -475,7 +475,6 @@ describe('/search', () => {
       expect(status).toBe(200);
       expect(body).toEqual([
         { fieldName: 'exifInfo.city', items: [] },
-        { fieldName: 'smartInfo.tags', items: [] },
       ]);
     });
   });

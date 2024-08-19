@@ -66,10 +66,51 @@ export const dateFormats = {
   },
 };
 
+interface Coordinates {
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+}
+
+export enum AssetGridOptionsValues {
+  onlyFavorites = 'onlyFavorites',
+  withPartners = 'withPartners',
+}
+
+export interface AssetGridOptions {
+  onlyFavorites: boolean;
+  withPartners: boolean;
+}
+
+export interface IQueryParameter {
+  previousRoute?: string;
+  coordinates?: Coordinates;
+  assetGridOptions?: AssetGridOptions;
+}
+
+export const createAssetGridOptionsFromArray = (enumArray: string[]): AssetGridOptions => {
+  const defaultValues: AssetGridOptions = {} as AssetGridOptions;
+
+  for (const key of Object.keys(AssetGridOptionsValues)) {
+    defaultValues[key as keyof AssetGridOptions] = false;
+  }
+
+  for (const enumValue of Object.values(AssetGridOptionsValues)) {
+    if (enumArray.includes(enumValue)) {
+      defaultValues[enumValue as keyof AssetGridOptions] = true;
+    }
+  }
+
+  return defaultValues;
+};
+
 export enum QueryParameter {
   ACTION = 'action',
   ASSET_INDEX = 'assetIndex',
+  ASSET_GRID_OPTIONS = 'assetGridOptions',
   IS_OPEN = 'isOpen',
+  IS_TIMELINE_OPENED = 'isTimelineOpened',
   MEMORY_INDEX = 'memoryIndex',
   ONBOARDING_STEP = 'step',
   OPEN_SETTING = 'openSetting',
@@ -78,6 +119,10 @@ export enum QueryParameter {
   SEARCHED_PEOPLE = 'searchedPeople',
   SMART_SEARCH = 'smartSearch',
   PAGE = 'page',
+  COORDINATESX1 = 'coordinatesx1',
+  COORDINATESX2 = 'coordinatesx2',
+  COORDINATESY1 = 'coordinatesy1',
+  COORDINATESY2 = 'coordinatesY2',
 }
 
 export enum OpenSettingQueryParameterValue {

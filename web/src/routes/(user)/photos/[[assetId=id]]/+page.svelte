@@ -16,17 +16,36 @@
   import AssetSelectControlBar from '$lib/components/photos-page/asset-select-control-bar.svelte';
   import MemoryLane from '$lib/components/photos-page/memory-lane.svelte';
   import EmptyPlaceholder from '$lib/components/shared-components/empty-placeholder.svelte';
-  import { AssetAction } from '$lib/constants';
+  import { AssetAction, QueryParameter } from '$lib/constants';
   import { createAssetInteractionStore } from '$lib/stores/asset-interaction.store';
   import { AssetStore } from '$lib/stores/assets.store';
   import { openFileUploadDialog } from '$lib/utils/file-uploader';
   import { assetViewingStore } from '$lib/stores/asset-viewing.store';
-  import { mdiDotsVertical, mdiPlus } from '@mdi/js';
+  import { mdiArrowLeft, mdiClose, mdiDotsVertical, mdiPlus } from '@mdi/js';
   import { preferences, user } from '$lib/stores/user.store';
   import { t } from 'svelte-i18n';
+  import Icon from '$lib/components/elements/icon.svelte';
+  import Button from '$lib/components/elements/buttons/button.svelte';
+  import { page } from '$app/stores';
+  import { goto } from '$app/navigation';
+  import type { PageData } from './$types';
+
+  export let data: PageData;
+  $: options = data.options;
+
+  $: x1 = options.coordinates ? options.coordinates.x1 : undefined;
+  $: x2 = options.coordinates ? options.coordinates.x2 : undefined;
+  $: y1 = options.coordinates ? options.coordinates.y1 : undefined;
+  $: y2 = options.coordinates ? options.coordinates.y2 : undefined;
+
+  // TODO: when getTimebuckets support withArchived
+  const isArchived = false;
+  const withStacked = undefined;
+  $: withPartners = options.assetGridOptions ? options.assetGridOptions.withPartners : true;
+  $: isFavorite = options.assetGridOptions?.onlyFavorites ? true : undefined;
 
   let { isViewing: showAssetViewer } = assetViewingStore;
-  const assetStore = new AssetStore({ isArchived: false, withStacked: true, withPartners: true });
+  $: assetStore = new AssetStore({ isArchived, withStacked, withPartners, isFavorite, x1, x2, y1, y2 });
   const assetInteractionStore = createAssetInteractionStore();
   const { isMultiSelectState, selectedAssets } = assetInteractionStore;
 
@@ -47,6 +66,25 @@
       assetInteractionStore.clearMultiselect();
       return;
     }
+  };
+
+  const closePreviousRoute = async () => {
+    const newUrl = new URL($page.url);
+    if (options.previousRoute) {
+      newUrl.searchParams.delete(QueryParameter.PREVIOUS_ROUTE);
+    }
+    if (options.coordinates) {
+      newUrl.searchParams.delete(QueryParameter.COORDINATESX1);
+      newUrl.searchParams.delete(QueryParameter.COORDINATESX2);
+      newUrl.searchParams.delete(QueryParameter.COORDINATESY1);
+      newUrl.searchParams.delete(QueryParameter.COORDINATESY2);
+    }
+    if (options.assetGridOptions) {
+      newUrl.searchParams.delete(QueryParameter.ASSET_GRID_OPTIONS);
+    }
+
+    options = {};
+    await goto(newUrl);
   };
 </script>
 
@@ -83,16 +121,38 @@
 {/if}
 
 <UserPageLayout hideNavbar={$isMultiSelectState} showUploadButton scrollbar={false}>
-  <AssetGrid
-    {assetStore}
-    {assetInteractionStore}
-    removeAction={AssetAction.ARCHIVE}
-    on:escape={handleEscape}
-    withStacked
-  >
-    {#if $preferences.memories.enabled}
-      <MemoryLane />
-    {/if}
-    <EmptyPlaceholder text={$t('no_assets_message')} onClick={() => openFileUploadDialog()} slot="empty" />
-  </AssetGrid>
+  {#if options.previousRoute || options.coordinates}
+    <div class="grid grid-cols-2 p-2">
+      <div>
+        {#if options.previousRoute}
+          <a href={options.previousRoute}>
+            <Button class="h-10 w-10 p-2" rounded="full" size="tiny">
+              <Icon path={mdiArrowLeft} size="26" />
+            </Button>
+          </a>
+        {/if}
+      </div>
+      <div class="text-right">
+        {#if options.coordinates || options.assetGridOptions}
+          <Button class="h-10 w-10 p-2" rounded="full" size="tiny" on:click={closePreviousRoute}>
+            <Icon path={mdiClose} size="26" />
+          </Button>
+        {/if}
+      </div>
+    </div>
+  {/if}
+  {#key options}
+    <AssetGrid
+      {assetStore}
+      {assetInteractionStore}
+      removeAction={AssetAction.ARCHIVE}
+      on:escape={handleEscape}
+      withStacked
+    >
+      {#if $preferences.memories.enabled}
+        <MemoryLane />
+      {/if}
+      <EmptyPlaceholder text={$t('no_assets_message')} onClick={() => openFileUploadDialog()} slot="empty" />
+    </AssetGrid>
+  {/key}
 </UserPageLayout>

@@ -7801,6 +7801,7 @@
           "rating": {
             "maximum": 5,
             "minimum": 0,
+            "nullable": true,
             "type": "number"
           }
         },
@@ -11989,6 +11990,7 @@
           "rating": {
             "maximum": 5,
             "minimum": 0,
+            "nullable": true,
             "type": "number"
           }
         },

@@ -11,7 +11,7 @@
 
   $: rating = asset.exifInfo?.rating || 0;
 
-  const handleChangeRating = async (rating: number) => {
+  const handleChangeRating = async (rating: number | null) => {
     try {
       await updateAsset({ id: asset.id, updateAssetDto: { rating } });
     } catch (error) {

@@ -49,11 +49,11 @@ export class UpdateAssetBase {
   @IsNotEmpty()
   longitude?: number;
 
-  @Optional()
+  @Optional({ nullable: true })
   @IsInt()
   @Max(5)
   @Min(0)
-  rating?: number;
+  rating?: number | null;
 }
 
 export class AssetBulkUpdateDto extends UpdateAssetBase {

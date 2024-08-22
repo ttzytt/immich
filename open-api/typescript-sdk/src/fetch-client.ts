@@ -346,7 +346,7 @@ export type AssetBulkUpdateDto = {
     isFavorite?: boolean;
     latitude?: number;
     longitude?: number;
-    rating?: number;
+    rating?: number | null;
 };
 export type AssetBulkUploadCheckItem = {
     /** base64 or hex encoded sha1 hash */
@@ -392,7 +392,7 @@ export type UpdateAssetDto = {
     isFavorite?: boolean;
     latitude?: number;
     longitude?: number;
-    rating?: number;
+    rating?: number | null;
 };
 export type AssetMediaReplaceDto = {
     assetData: Blob;

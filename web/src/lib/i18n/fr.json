@@ -174,7 +174,7 @@
     "oauth_issuer_url": "URL de l'émetteur",
     "oauth_mobile_redirect_uri": "URI de redirection mobile",
     "oauth_mobile_redirect_uri_override": "Remplacer l'URI de redirection mobile",
-    "oauth_mobile_redirect_uri_override_description": "Activer lorsque 'app.immich:/' est une URI de redirection non valide.",
+    "oauth_mobile_redirect_uri_override_description": "Activer quand le fournisseur d'OAuth ne permet pas un URI mobile, comme '{callback} '",
     "oauth_profile_signing_algorithm": "Algorithme de signature de profil",
     "oauth_profile_signing_algorithm_description": "Algorithme utilisé pour signer le profil utilisateur.",
     "oauth_scope": "Portée",
